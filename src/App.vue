@@ -11,15 +11,17 @@
       </header>
       <div class="todo__list">
         <ul class="container" v-dragula="colOne" bag="first-bag">
-            <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
-              <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
-                :placeholder="todo.name" maxlength="25">
-              <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
-              <label @click="changeIcon(todo, index)" :for="index">
-                <img :src="todo.src">
-              </label>
-              <input :id="index" v-model="todo.check" type="checkbox">
-            </li>
+            <transition-group name="appear">
+              <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
+                <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
+                  :placeholder="todo.name" maxlength="25">
+                <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
+                <label @click="changeIcon(todo, index)" :for="index">
+                  <img :src="todo.src">
+                </label>
+                <input :id="index" v-model="todo.check" type="checkbox">
+              </li>
+            </transition-group>
         </ul>
       </div>
       <footer :class="{'is--active': inputActive}">
@@ -331,6 +333,8 @@
   } 
   
   //  Animations
+
+  //**Todo Input
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
@@ -343,6 +347,22 @@
 .fade-enter-to, .fade-leave {
   transform: translateX(-100px);
 }
+
+//**Todo actions
+
+.appear-enter-active, .appear-leave-active {
+  transition: height .5s;
+}
+
+.appear-enter, .appear-leave-to {
+  opacity: 0;
+  height: 0;
+}
+
+.appear-enter-to, .appear-leave {
+  height: 50px;
+}
+
 
   @-webkit-keyframes pulse {
 
