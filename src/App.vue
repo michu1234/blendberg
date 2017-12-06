@@ -10,12 +10,11 @@
         <p class="todo__dayname">{{currentDayName | toUpperCase}}</p>
       </header>
       <div class="todo__list">
-        <ul>
+        <ul class="container" v-dragula="colOne" bag="first-bag">
           <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
             <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
               :placeholder="todo.name" maxlength="25">
             <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
-
             <label @click="changeIcon(todo, index)" :for="index">
               <img :src="todo.src">
             </label>
@@ -93,7 +92,7 @@
       this.currentDay = moment().format("D");
       this.currentMonth = moment().format("MMM");
       this.currentYear = moment().format("YYYY");
-      this.currentDayName = moment().format("dddd");
+      this.currentDayName = moment().format("dddd");      
     },
     methods: {
       changeIcon(todo) {

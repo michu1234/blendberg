@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Moment from 'moment'
+var VueDragula = require('vue-dragula');
 
+Vue.use(VueDragula);
 
 global.moment = Moment
 
