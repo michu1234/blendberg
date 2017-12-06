@@ -11,19 +11,23 @@
       </header>
       <div class="todo__list">
         <ul class="container" v-dragula="colOne" bag="first-bag">
-          <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
-            <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
-              :placeholder="todo.name" maxlength="25">
-            <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
-            <label @click="changeIcon(todo, index)" :for="index">
-              <img :src="todo.src">
-            </label>
-            <input :id="index" v-model="todo.check" type="checkbox">
-          </li>
+            <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
+              <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
+                :placeholder="todo.name" maxlength="25">
+              <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
+              <label @click="changeIcon(todo, index)" :for="index">
+                <img :src="todo.src">
+              </label>
+              <input :id="index" v-model="todo.check" type="checkbox">
+            </li>
         </ul>
       </div>
-      <footer :class="{isactive: inputActive}">
-        <input v-model="newTodo" @keyup.enter="pushNewTodo" v-if="inputActive" class="todo__input" type="text" placeholder="add new action and press ENTER...">
+      <footer :class="{'is--active': inputActive}">
+
+        <transition name="fade">
+          <input v-model="newTodo" @keyup.enter="pushNewTodo" v-if="inputActive" class="todo__input" type="text" placeholder="add new action and press ENTER...">
+          
+        </transition>
         <div @click="addNewTodo" class="todo__button todo--pulse">+</div>
       </footer>
     </section>
@@ -164,15 +168,16 @@
   $list_icon: #50e3a4; 
   
   // Fonts
-  @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700'); // Base 
+  @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700'); 
+  
+  // Base 
   html {
     font-size: 62.5%;
     font-family: 'Montserrat';
   } 
-  
-  // Base
+
   body {
-    background: $backgroud_color; // transform: scale(.8);
+    background: $backgroud_color;
   }
 
   p {
@@ -308,7 +313,7 @@
     color: $list_font_disabled;
   }
 
-  .isactive {
+  .is--active {
     height: 150px;
   }
 
@@ -328,6 +333,46 @@
   } 
   
   //  Animations
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+  transform: translateX(0);
+}
+
+.fade-enter-to, .fade-leave {
+  transform: translateX(-100px);
+}
+
+
+.appear-enter-active, .appear-leave-active {
+  transition: opacity .5s, height .5s;
+}
+
+.appear-enter, .appear-leave-to {
+  opacity: 0;
+  transform: translateY(0);
+  height: 50px;
+}
+
+.appear-enter-to, .appear-leave {
+  transform: translateY(-100px);
+  height: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
   @-webkit-keyframes pulse {
 
     0% {
