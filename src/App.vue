@@ -23,10 +23,8 @@
         </ul>
       </div>
       <footer :class="{'is--active': inputActive}">
-
         <transition name="fade">
           <input v-model="newTodo" @keyup.enter="pushNewTodo" v-if="inputActive" class="todo__input" type="text" placeholder="add new action and press ENTER...">
-          
         </transition>
         <div @click="addNewTodo" class="todo__button todo--pulse">+</div>
       </footer>
@@ -345,33 +343,6 @@
 .fade-enter-to, .fade-leave {
   transform: translateX(-100px);
 }
-
-
-.appear-enter-active, .appear-leave-active {
-  transition: opacity .5s, height .5s;
-}
-
-.appear-enter, .appear-leave-to {
-  opacity: 0;
-  transform: translateY(0);
-  height: 50px;
-}
-
-.appear-enter-to, .appear-leave {
-  transform: translateY(-100px);
-  height: 0;
-}
-
-
-
-
-
-
-
-
-
-
-
 
   @-webkit-keyframes pulse {
 
