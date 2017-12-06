@@ -10,8 +10,8 @@
         <p class="todo__dayname">{{currentDayName | toUpperCase}}</p>
       </header>
       <div class="todo__list">
-        <ul class="container" v-dragula="colOne" bag="first-bag">
-            <transition-group name="appear">
+        <ul class="container">
+            <transition-group name="appear" v-dragula="colOne" bag="first-bag">
               <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
                 <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
                   :placeholder="todo.name" maxlength="25">
