@@ -11,7 +11,10 @@
       </header>
       <div class="todo__list">
         <ul>
-          <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index"><span class="todo__name">{{todo.name}}</span>
+          <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
+            <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name" :placeholder="todo.name">
+            <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
+
             <label @click="changeIcon(todo, index)" :for="index">
               <img :src="todo.src">
             </label>
@@ -23,13 +26,6 @@
         <div class="todo__button todo--pulse">+</div>
       </footer>
     </section>
-
-
-
-
-
-
-
   </div>
 </template>
 
@@ -46,37 +42,44 @@
         todos: [{
             name: "Buy new sweatshirt",
             check: true,
-            src: 'src/assets/checked.png'
+            src: 'src/assets/checked.png',
+            edit: false
           },
           {
             name: "Begin promotional phase",
             check: true,
-            src: 'src/assets/checked.png'
+            src: 'src/assets/checked.png',
+            edit: false
           },
           {
             name: "Read an article",
             check: false,
-            src: 'src/assets/unchecked.png'
+            src: 'src/assets/unchecked.png',
+            edit: false
           },
           {
             name: "Try not to fall asleep",
             check: false,
-            src: 'src/assets/unchecked.png'
+            src: 'src/assets/unchecked.png',
+            edit: false
           },
           {
             name: "Watch 'Sherlock'",
             check: false,
-            src: 'src/assets/unchecked.png'
+            src: 'src/assets/unchecked.png',
+            edit: false
           },
           {
             name: "Begin QA for the product",
             check: false,
-            src: 'src/assets/unchecked.png'
+            src: 'src/assets/unchecked.png',
+            edit: false
           },
           {
             name: "Go for a walk",
             check: false,
-            src: 'src/assets/unchecked.png'
+            src: 'src/assets/unchecked.png',
+            edit: false
           }
         ]
       }
@@ -96,7 +99,15 @@
           todo.src = "src/assets/checked.png";
           todo.check != todo.check;
         }
-      }
+      },
+      editTodo(todo){
+          if(todo.edit === false){
+            todo.edit = true;
+          }
+        },
+        finishEdit(todo) {
+          todo.edit = false;
+        }
 
 
     },
@@ -129,8 +140,7 @@
   $list_font_active: #6c7079;
   $button_background: #50e3a4;
   $button_icon: #46be8b;
-  $list_icon: #50e3a4; 
-  // Font Faces
+  $list_icon: #50e3a4; // Font Faces
   // @font-face {
   //   font-family: Nunito-Regular;
   //   src: url('https://fonts.googleapis.com/css?family=Nunito');
@@ -185,7 +195,23 @@
     pointer-events: none;
     position: absolute;
     margin-right: -20000px;
-  } // Layout
+  } 
+
+  input[type="text"]{
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    width: 85%;
+    color: $list_font_disabled;
+    border: 1px solid $list_font_disabled;
+    transition: all .3s;
+    font-size: 2.5rem;
+  }
+  
+  
+  
+  
+  // Layout
   // Block + element
   .todo {
     max-width: 516px;
@@ -212,6 +238,9 @@
       line-height: 5rem;
       font-weight: 700;
     }
+    &__name {
+      outline: 1px solid transparent;
+    }
     &__button {
       text-align: center;
       font-size: 5.6rem;
@@ -224,26 +253,28 @@
       box-shadow: 0 2px 4px $list_font_disabled;
       cursor: pointer;
     }
-  }
-
-
-  // Modifier
+  } // Modifier
   .todo--pulse {
     animation: pulse 1s ease infinite;
-  }
-
-  // State 
+  } // State 
   .is--disabled {
     color: $list_font_disabled;
   }
 
   .todo__name:hover {
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    width: 85%;
     outline: 1px solid $list_font_disabled;
-    padding: 1rem;
+    transition: all .3s;
   }
-  
-  
-   //  Animations
+
+  .todo__name:hover::after {
+    content: "✎";
+    color: $list_font_disabled;
+    font-size: 2rem;
+  } //  Animations
   @-webkit-keyframes pulse {
     0% {
       -webkit-transform: scale3d(1, 1, 1);
