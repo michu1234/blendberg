@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div @click.self="finishEditAll" id="app">
     <section class="todo">
       <header class="todo__header">
         <p class="todo__day">{{currentDay}}</p>
@@ -12,7 +12,8 @@
       <div class="todo__list">
         <ul>
           <li v-for="(todo, index) in todos" :class="{ 'is--disabled': todo.check }" :key="index">
-            <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name" :placeholder="todo.name">
+            <input @keyup.enter="finishEdit(todo)" @blur="finishEdit(todo)" v-if="todo.edit" type="text" :id="index" v-model="todo.name"
+              :placeholder="todo.name" maxlength="25">
             <span v-else @click="editTodo(todo)" class="todo__name">{{todo.name}}</span>
 
             <label @click="changeIcon(todo, index)" :for="index">
@@ -22,23 +23,27 @@
           </li>
         </ul>
       </div>
-      <footer>
-        <div class="todo__button todo--pulse">+</div>
+      <footer :class="{isactive: inputActive}">
+        <input v-model="newTodo" @keyup.enter="pushNewTodo" v-if="inputActive" class="todo__input" type="text" placeholder="add new action and press ENTER...">
+        <div @click="addNewTodo" class="todo__button todo--pulse">+</div>
       </footer>
     </section>
+
   </div>
 </template>
 
 <script>
   export default {
     name: "ToDo",
-    currentDay: "",
-    currentMonth: "",
-    currentYear: "",
-    currentDayName: "",
     data() {
       return {
         msg: "",
+        currentDay: "",
+        currentMonth: "",
+        currentYear: "",
+        currentDayName: "",
+        inputActive: false,
+        newTodo: "",
         todos: [{
             name: "Buy new sweatshirt",
             check: true,
@@ -100,21 +105,36 @@
           todo.check != todo.check;
         }
       },
-      editTodo(todo){
-          if(todo.edit === false){
-            todo.edit = true;
-          }
-        },
-        finishEdit(todo) {
-          todo.edit = false;
+      editTodo(todo) {
+        if (todo.edit === false) {
+          todo.edit = true;
         }
-
-
+      },
+      finishEdit(todo) {
+        todo.edit = false;
+      },
+      addNewTodo() {
+        this.inputActive = true;
+      },
+      finishEditAll() {
+        this.todos.forEach(function (todo) {
+          todo.edit = false;
+        })
+      },
+      pushNewTodo() {
+        this.todos.push({
+          name: this.newTodo,
+          check: false,
+          src: 'src/assets/unchecked.png',
+          edit: false
+        });
+        this.newTodo = "";
+        this.inputActive = false;
+      }
     },
     filters: {
       toUpperCase: function (data) {
         return data.toString().toUpperCase();
-
       }
     }
   }
@@ -122,6 +142,7 @@
 </script>
 
 <style lang="scss">
+
   // Table of contents
   // 1. Variables
   // 2. Font Faces
@@ -132,6 +153,7 @@
   // 7. State
   // 8. Animations
   // 9. Media Queries
+ 
   // Variables
   $backgroud_color: #f0efe9;
   $todo_background: #ffffff;
@@ -140,16 +162,16 @@
   $list_font_active: #6c7079;
   $button_background: #50e3a4;
   $button_icon: #46be8b;
-  $list_icon: #50e3a4; // Font Faces
-  // @font-face {
-  //   font-family: Nunito-Regular;
-  //   src: url('https://fonts.googleapis.com/css?family=Nunito');
-  // }
+  $list_icon: #50e3a4; 
+  
+  // Fonts
   @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700'); // Base 
   html {
     font-size: 62.5%;
     font-family: 'Montserrat';
-  } // Base
+  } 
+  
+  // Base
   body {
     background: $backgroud_color; // transform: scale(.8);
   }
@@ -175,9 +197,9 @@
 
   footer {
     position: relative;
-    height: 50px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   img {
@@ -190,14 +212,18 @@
     cursor: pointer;
   }
 
+  input {
+    outline: transparent;
+  }
+
   input[type="checkbox"] {
     visibility: hidden;
     pointer-events: none;
     position: absolute;
     margin-right: -20000px;
-  } 
+  }
 
-  input[type="text"]{
+  input[type="text"] {
     display: block;
     height: 50px;
     line-height: 50px;
@@ -206,41 +232,46 @@
     border: 1px solid $list_font_disabled;
     transition: all .3s;
     font-size: 2.5rem;
-  }
-  
-  
-  
+  } 
   
   // Layout
+  
   // Block + element
   .todo {
-    max-width: 516px;
+
+    width: 516px;
     margin: 0 auto 100px auto;
     background-color: $todo_background;
+
     &__header {
       display: flex;
       color: $header_font_color;
       padding: 5rem 5.6rem;
     }
+
     &__container {
       padding: 1rem 0 0 1rem;
       font-size: 2rem;
       line-height: 2rem;
     }
+
     &__day {
       font-size: 5rem;
       font-weight: 700;
     }
+
     &__dayname {
       margin-left: auto;
-      padding-top: .5rem;
+      padding: .5rem 0 0 .4rem;
       font-size: 2rem;
       line-height: 5rem;
       font-weight: 700;
     }
+
     &__name {
       outline: 1px solid transparent;
     }
+
     &__button {
       text-align: center;
       font-size: 5.6rem;
@@ -248,17 +279,38 @@
       color: $button_icon;
       width: 100px;
       height: 100px;
+      margin-bottom: -40px;
       background: $button_background;
       border-radius: 50%;
       box-shadow: 0 2px 4px $list_font_disabled;
       cursor: pointer;
+      z-index: 33;
     }
-  } // Modifier
+
+    &__input {
+      margin: 0 align-self;
+      width: 100%;
+      margin-bottom: 25px;
+      border-radius: 7px;
+      color: $list_font_disabled;
+      padding-left: 6px;
+      text-align: center;
+    }
+
+  } 
+  
+  // Modifier
   .todo--pulse {
     animation: pulse 1s ease infinite;
-  } // State 
+  }
+  
+   // State 
   .is--disabled {
     color: $list_font_disabled;
+  }
+
+  .isactive {
+    height: 150px;
   }
 
   .todo__name:hover {
@@ -274,35 +326,45 @@
     content: "✎";
     color: $list_font_disabled;
     font-size: 2rem;
-  } //  Animations
+  } 
+  
+  //  Animations
   @-webkit-keyframes pulse {
+
     0% {
       -webkit-transform: scale3d(1, 1, 1);
       transform: scale3d(1, 1, 1);
     }
+
     50% {
       -webkit-transform: scale3d(1.05, 1.05, 1.05);
       transform: scale3d(1.09, 1.09, 1.09);
     }
+
     100% {
       -webkit-transform: scale3d(1, 1, 1);
       transform: scale3d(1, 1, 1);
     }
+
   }
 
   @keyframes pulse {
+    
     0% {
       -webkit-transform: scale3d(1, 1, 1);
       transform: scale3d(1, 1, 1);
     }
+
     50% {
       -webkit-transform: scale3d(1.05, 1.05, 1.05);
       transform: scale3d(1.09, 1.09, 1.09);
     }
+
     100% {
       -webkit-transform: scale3d(1, 1, 1);
       transform: scale3d(1, 1, 1);
     }
+
   }
 
 </style>
